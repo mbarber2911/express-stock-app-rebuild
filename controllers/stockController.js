@@ -68,8 +68,9 @@ exports.sort = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     // Destructure the request body to get product details
-    console.log(req.body);
-    const { id, name, price, quantity, type } = req.body;
+    console.log("hi", req.body);
+    const { id, name, price, quantity, type, size, material, brand, warranty } =
+      req.body;
 
     // Create a new product in the database
     const product = await Product.create({
@@ -79,6 +80,15 @@ exports.create = async (req, res) => {
       quantity,
       type,
     });
+
+    // Based on the product type, create associated Clothing or Electronic record
+    if (type === "clothing") {
+      await Clothing.create({ ProductId: product.id, size, material });
+    } else if (type === "electronic") {
+      await Electronic.create({ ProductId: product.id, brand, warranty });
+    } else {
+      return res.status(400).send("Invalid product type.");
+    }
 
     // Redirect to the home page after successful creation
     res.redirect("/");
