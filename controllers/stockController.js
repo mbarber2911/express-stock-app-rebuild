@@ -2,6 +2,7 @@ const db = require("../models");
 const Product = db.Product;
 const Clothing = db.Clothing;
 const Electronic = db.Electronic;
+const axios = require("axios");
 const { Op } = require("sequelize");
 
 exports.index = async (req, res) => {
@@ -95,5 +96,44 @@ exports.create = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send("Error creating product.");
+  }
+};
+
+exports.convertCurrency = async (req, res) => {
+  const { id } = req.params;
+  const targetCurrency = req.query.currency || "USD"; // Updated to use query parameter or default to USD
+
+  try {
+    const product = await Product.findByPk(id, {
+      include: [
+        { model: Clothing, required: false },
+        { model: Electronic, required: false },
+      ],
+    });
+
+    if (!product) {
+      return res.status(404).send("Product not found.");
+    }
+
+    const response = await axios.get(
+      `https://api.exchangerate-api.com/v4/latest/GBP`,
+    );
+
+    const exchangeRate = response.data.rates[targetCurrency];
+
+    const convertedPrice =
+      targetCurrency === "GBP"
+        ? product.price
+        : (product.price * exchangeRate).toFixed(2);
+
+    res.render("details", {
+      product: product,
+      convertedPrice: convertedPrice,
+      targetCurrency: targetCurrency,
+      originalCurrency: "GBP",
+    });
+  } catch (error) {
+    console.error("Error fetching exchange rates or product:", error);
+    res.status(500).send("Error converting currency.");
   }
 };

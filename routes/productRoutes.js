@@ -14,5 +14,6 @@ router.get('/sort', stockController.sort);
 
 // POST create a new product
 router.post('/create', stockController.create);
+router.get('/details/:id/convert', stockController.convertCurrency);
 
 module.exports = router;

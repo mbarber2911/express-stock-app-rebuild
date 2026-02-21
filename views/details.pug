@@ -20,5 +20,17 @@ html
       p Brand: #{product.Electronic.brand}
       p Warranty: #{product.Electronic.warranty}
 
+    //- Currency conversion form
+    h2 Currency Conversion
+    form(action=`/details/${product.id}/convert` method="get")
+      label(for="currency") Convert to USD:
+      input(type="hidden" name="currency" value="USD")
+      button(type="submit") Convert to USD
+
+    //- Display converted price if available
+    if convertedPrice
+      p Converted Price: #{convertedPrice} USD
+
+
     //- Link back to the inventory list
     a(href="/") Back to Inventory
