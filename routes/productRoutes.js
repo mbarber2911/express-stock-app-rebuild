@@ -16,4 +16,7 @@ router.get('/sort', stockController.sort);
 router.post('/create', stockController.create);
 router.get('/details/:id/convert', stockController.convertCurrency);
 
+// DELETE a product
+router.delete('/delete/:id', stockController.delete);
+
 module.exports = router;

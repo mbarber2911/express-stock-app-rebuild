@@ -1,4 +1,5 @@
 const express = require("express");
+const methodOverride = require("method-override");
 const app = express();
 const port = 3000;
 const productRoutes = require("./routes/productRoutes");
@@ -9,6 +10,7 @@ app.set("views", "./views");
 app.use(express.static("./public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(methodOverride("_method")); // register it
 
 // Use product routes
 app.use("/", productRoutes);

@@ -55,11 +55,19 @@ exports.search = async (req, res) => {
 
 exports.sort = async (req, res) => {
   try {
-    // Fetch all products and sort them by name in ascending order
+    const { sortBy = "name", order = "ASC" } = req.query;
+
+    const validColumns = ["name", "price", "quantity"];
+    const validOrders = ["ASC", "DESC"];
+
+    const column = validColumns.includes(sortBy) ? sortBy : "name";
+    const direction = validOrders.includes(order.toUpperCase()) ? order.toUpperCase() : "ASC";
+
     const products = await Product.findAll({
-      order: [["name", "ASC"]],
+      order: [[column, direction]],
     });
-    res.render("index", { products, sortBy: "name" });
+
+    res.render("index", { products, sortBy: column, order: direction });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error sorting products.");
@@ -135,5 +143,22 @@ exports.convertCurrency = async (req, res) => {
   } catch (error) {
     console.error("Error fetching exchange rates or product:", error);
     res.status(500).send("Error converting currency.");
+  }
+};
+
+exports.delete = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await Product.findByPk(id);
+
+    if (!product) {
+      return res.status(404).send("Product not found.");
+    }
+
+    await product.destroy();
+    res.redirect("/");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error deleting product.");
   }
 };

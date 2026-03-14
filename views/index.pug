@@ -15,6 +15,10 @@ html
       select(name="sortBy" onchange="this.form.submit()")
         option(value="name" selected=sortBy === 'name') Sort by Name
         option(value="price" selected=sortBy === 'price') Sort by Price
+        option(value="quantity" selected=sortBy === 'quantity') Sort by Quantity
+      select(name="order" onchange="this.form.submit()")
+        option(value="ASC" selected=order === 'ASC') Ascending
+        option(value="DESC" selected=order === 'DESC') Descending
 
     //- Add new product form
     form(action="/create" method="post")
