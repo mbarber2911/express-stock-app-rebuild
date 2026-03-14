@@ -2,6 +2,7 @@ const db = require("../models");
 const Product = db.Product;
 const Clothing = db.Clothing;
 const Electronic = db.Electronic;
+const Book = db.Book;
 const axios = require("axios");
 const { Op } = require("sequelize");
 
@@ -22,6 +23,7 @@ exports.getDetails = async (req, res) => {
       include: [
         { model: Clothing, required: false },
         { model: Electronic, required: false },
+        { model: Book, required: false },
       ],
     });
 
@@ -78,9 +80,8 @@ exports.create = async (req, res) => {
   try {
     // Destructure the request body to get product details
     console.log("hi", req.body);
-    const { id, name, price, quantity, type, size, material, brand, warranty } =
-      req.body;
-
+    const { id, name, price, quantity, type, size, material, brand, warranty, author, genre, isbn } = req.body;
+    
     // Create a new product in the database
     const product = await Product.create({
       id,
@@ -92,12 +93,14 @@ exports.create = async (req, res) => {
 
     // Based on the product type, create associated Clothing or Electronic record
     if (type === "clothing") {
-      await Clothing.create({ ProductId: product.id, size, material });
-    } else if (type === "electronic") {
-      await Electronic.create({ ProductId: product.id, brand, warranty });
-    } else {
-      return res.status(400).send("Invalid product type.");
-    }
+    await Clothing.create({ ProductId: product.id, size, material });
+} else if (type === "electronic") {
+    await Electronic.create({ ProductId: product.id, brand, warranty });
+} else if (type === "book") {
+    await Book.create({ ProductId: product.id, author, genre, isbn });
+} else {
+    return res.status(400).send("Invalid product type.");
+}
 
     // Redirect to the home page after successful creation
     res.redirect("/");
@@ -116,6 +119,7 @@ exports.convertCurrency = async (req, res) => {
       include: [
         { model: Clothing, required: false },
         { model: Electronic, required: false },
+        { model: Book, required: false },
       ],
     });
 
@@ -170,6 +174,7 @@ exports.getEdit = async (req, res) => {
       include: [
         { model: Clothing, required: false },
         { model: Electronic, required: false },
+        { model: Book, required: false },
       ],
     });
 
@@ -187,12 +192,13 @@ exports.getEdit = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, price, quantity, size, material, brand, warranty } = req.body;
+    const { name, price, quantity, size, material, brand, warranty, author, genre, isbn } = req.body;
 
     const product = await Product.findByPk(id, {
       include: [
         { model: Clothing, required: false },
         { model: Electronic, required: false },
+        { model: Book, required: false },
       ],
     });
 
@@ -203,10 +209,12 @@ exports.update = async (req, res) => {
     await product.update({ name, price, quantity });
 
     if (product.type === "clothing" && product.Clothing) {
-      await product.Clothing.update({ size, material });
-    } else if (product.type === "electronic" && product.Electronic) {
-      await product.Electronic.update({ brand, warranty });
-    }
+    await product.Clothing.update({ size, material });
+} else if (product.type === "electronic" && product.Electronic) {
+    await product.Electronic.update({ brand, warranty });
+} else if (product.type === "book" && product.Book) {
+    await product.Book.update({ author, genre, isbn });
+}
 
     res.redirect("/");
   } catch (err) {

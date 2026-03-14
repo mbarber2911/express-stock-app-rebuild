@@ -39,8 +39,9 @@ html
         option(value="") Select a type
         option(value="clothing") Clothing
         option(value="electronic") Electronic
+        option(value="book") Book
       br
-      //- Conditional fields for clothing and electronics
+      //- Conditional fields for clothing, electronics and books
       div(id="clothingFields" style="display: none;")
         label(for="size") Size:
         input(type="text" id="size" name="size")
@@ -53,6 +54,15 @@ html
         br
         label(for="warranty") Warranty:
         input(type="text" id="warranty" name="warranty")
+      div(id="bookFields" style="display: none;")
+        label(for="author") Author:
+        input(type="text" id="author" name="author")
+        br
+        label(for="genre") Genre:
+        input(type="text" id="genre" name="genre")
+        br
+        label(for="isbn") ISBN:
+        input(type="text" id="isbn" name="isbn")
       br
 
       button(type="submit") Add Product
@@ -79,30 +89,38 @@ html
               a(href=`/details/${product.id}`) View Details
               | &nbsp;
               a(href=`/edit/${product.id}`) Edit
-              form(action=`/delete/${product.id}` method="post" style="display:inline;")
-                input(type="hidden" name="_method" value="DELETE")
+              | &nbsp;
+              form(action=`/delete/${product.id}?_method=DELETE` method="post" style="display:inline;")
                 button(type="submit") Delete
+
     //- JavaScript for conditional fields
     script.
       const typeSelect = document.getElementById('type');
       const clothingFields = document.getElementById('clothingFields');
       const electronicFields = document.getElementById('electronicFields');
+      const bookFields = document.getElementById('bookFields');
 
       function updateFields() {
-        if (typeSelect.value === 'clothing') {
-          clothingFields.style.display = 'block';
-          electronicFields.style.display = 'none';
-        } else if (typeSelect.value === 'electronic') {
-          clothingFields.style.display = 'none';
-          electronicFields.style.display = 'block';
-        } else {
-          clothingFields.style.display = 'none';
-          electronicFields.style.display = 'none';
-        }
+          if (typeSelect.value === 'clothing') {
+              clothingFields.style.display = 'block';
+              electronicFields.style.display = 'none';
+              bookFields.style.display = 'none';
+          } else if (typeSelect.value === 'electronic') {
+              clothingFields.style.display = 'none';
+              electronicFields.style.display = 'block';
+              bookFields.style.display = 'none';
+          } else if (typeSelect.value === 'book') {
+              clothingFields.style.display = 'none';
+              electronicFields.style.display = 'none';
+              bookFields.style.display = 'block';
+          } else {
+              clothingFields.style.display = 'none';
+              electronicFields.style.display = 'none';
+              bookFields.style.display = 'none';
+          }
       }
 
       typeSelect.addEventListener('change', updateFields);
       
       // Initialize fields on page load
       updateFields();
-

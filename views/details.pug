@@ -19,6 +19,10 @@ html
     else if product.type === 'electronic' && product.Electronic
       p Brand: #{product.Electronic.brand}
       p Warranty: #{product.Electronic.warranty}
+    else if product.type === 'book' && product.Book
+      p Author: #{product.Book.author}
+      p Genre: #{product.Book.genre}
+      p ISBN: #{product.Book.isbn}
 
     //- Currency conversion form
     h2 Currency Conversion

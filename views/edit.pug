@@ -28,6 +28,15 @@ html
         br
         label(for="warranty") Warranty:
         input(type="text" id="warranty" name="warranty" value=product.Electronic.warranty)
+      else if product.type === 'book' && product.Book
+        label(for="author") Author:
+        input(type="text" id="author" name="author" value=product.Book.author)
+        br
+        label(for="genre") Genre:
+        input(type="text" id="genre" name="genre" value=product.Book.genre)
+        br
+        label(for="isbn") ISBN:
+        input(type="text" id="isbn" name="isbn" value=product.Book.isbn)
 
       br
       button(type="submit") Save Changes
