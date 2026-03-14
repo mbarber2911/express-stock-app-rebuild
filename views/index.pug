@@ -77,6 +77,8 @@ html
             td= product.type 
             td
               a(href=`/details/${product.id}`) View Details
+              | &nbsp;
+              a(href=`/edit/${product.id}`) Edit
               form(action=`/delete/${product.id}` method="post" style="display:inline;")
                 input(type="hidden" name="_method" value="DELETE")
                 button(type="submit") Delete

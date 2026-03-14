@@ -19,4 +19,10 @@ router.get('/details/:id/convert', stockController.convertCurrency);
 // DELETE a product
 router.delete('/delete/:id', stockController.delete);
 
+// GET edit product form
+router.get('/edit/:id', stockController.getEdit);
+
+// PUT update a product
+router.put('/edit/:id', stockController.update);
+
 module.exports = router;

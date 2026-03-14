@@ -162,3 +162,55 @@ exports.delete = async (req, res) => {
     res.status(500).send("Error deleting product.");
   }
 };
+
+exports.getEdit = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await Product.findByPk(id, {
+      include: [
+        { model: Clothing, required: false },
+        { model: Electronic, required: false },
+      ],
+    });
+
+    if (!product) {
+      return res.status(404).send("Product not found.");
+    }
+
+    res.render("edit", { product });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching product for edit.");
+  }
+};
+
+exports.update = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, price, quantity, size, material, brand, warranty } = req.body;
+
+    const product = await Product.findByPk(id, {
+      include: [
+        { model: Clothing, required: false },
+        { model: Electronic, required: false },
+      ],
+    });
+
+    if (!product) {
+      return res.status(404).send("Product not found.");
+    }
+
+    await product.update({ name, price, quantity });
+
+    if (product.type === "clothing" && product.Clothing) {
+      await product.Clothing.update({ size, material });
+    } else if (product.type === "electronic" && product.Electronic) {
+      await product.Electronic.update({ brand, warranty });
+    }
+
+    res.redirect("/");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error updating product.");
+  }
+};
