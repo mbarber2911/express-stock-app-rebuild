@@ -222,3 +222,38 @@ exports.update = async (req, res) => {
     res.status(500).send("Error updating product.");
   }
 };
+
+exports.getSummary = async (req, res) => {
+  try {
+    const products = await Product.findAll({
+      include: [
+        { model: Clothing, required: false },
+        { model: Electronic, required: false },
+        { model: Book, required: false },
+      ],
+    });
+
+    const totalProducts = products.length;
+    const totalValue = products.reduce((sum, p) => sum + p.price * p.quantity, 0).toFixed(2);
+    const totalStock = products.reduce((sum, p) => sum + p.quantity, 0);
+    const lowStock = products.filter(p => p.quantity < 30);
+
+    const byCategory = {
+      clothing: products.filter(p => p.type === 'clothing').length,
+      electronic: products.filter(p => p.type === 'electronic').length,
+      book: products.filter(p => p.type === 'book').length,
+    };
+
+    res.render('summary', {
+      totalProducts,
+      totalValue,
+      totalStock,
+      lowStock,
+      byCategory,
+      products,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching stock summary.");
+  }
+};

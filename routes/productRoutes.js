@@ -25,4 +25,7 @@ router.get('/edit/:id', stockController.getEdit);
 // PUT update a product
 router.put('/edit/:id', stockController.update);
 
+// GET stock summary page
+router.get('/summary', stockController.getSummary);
+
 module.exports = router;
