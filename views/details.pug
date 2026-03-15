@@ -27,14 +27,18 @@ html
     //- Currency conversion form
     h2 Currency Conversion
     form(action=`/details/${product.id}/convert` method="get")
-      label(for="currency") Convert to USD:
-      input(type="hidden" name="currency" value="USD")
-      button(type="submit") Convert to USD
+      label(for="currency") Convert to:
+      select(id="currency" name="currency")
+        option(value="USD" selected=targetCurrency === 'USD') USD - US Dollar
+        option(value="EUR" selected=targetCurrency === 'EUR') EUR - Euro
+        option(value="JPY" selected=targetCurrency === 'JPY') JPY - Japanese Yen
+        option(value="CAD" selected=targetCurrency === 'CAD') CAD - Canadian Dollar
+        option(value="AUD" selected=targetCurrency === 'AUD') AUD - Australian Dollar
+        option(value="GBP" selected=targetCurrency === 'GBP') GBP - British Pound
+      button(type="submit") Convert
 
-    //- Display converted price if available
     if convertedPrice
-      p Converted Price: #{convertedPrice} USD
-
+      p Converted Price: #{convertedPrice} #{targetCurrency}
 
     //- Link back to the inventory list
     a(href="/") Back to Inventory
