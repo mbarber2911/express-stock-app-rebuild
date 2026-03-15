@@ -3,42 +3,65 @@ html
     title Edit Product
     link(rel='stylesheet', href='/styles.css')
   body
-    h1 Edit Product
 
-    form(action=`/edit/${product.id}?_method=PUT` method="post")
-      label(for="name") Name:
-      input(type="text" id="name" name="name" value=product.name required)
-      br
-      label(for="price") Price:
-      input(type="number" id="price" name="price" step="0.01" value=product.price required)
-      br
-      label(for="quantity") Quantity:
-      input(type="number" id="quantity" name="quantity" value=product.quantity required)
-      br
+    //- Navigation bar
+    nav.navbar
+      h1 Edit Product
+      a(href="/") Back to Inventory
 
-      if product.type === 'clothing' && product.Clothing
-        label(for="size") Size:
-        input(type="text" id="size" name="size" value=product.Clothing.size)
-        br
-        label(for="material") Material:
-        input(type="text" id="material" name="material" value=product.Clothing.material)
-      else if product.type === 'electronic' && product.Electronic
-        label(for="brand") Brand:
-        input(type="text" id="brand" name="brand" value=product.Electronic.brand)
-        br
-        label(for="warranty") Warranty:
-        input(type="text" id="warranty" name="warranty" value=product.Electronic.warranty)
-      else if product.type === 'book' && product.Book
-        label(for="author") Author:
-        input(type="text" id="author" name="author" value=product.Book.author)
-        br
-        label(for="genre") Genre:
-        input(type="text" id="genre" name="genre" value=product.Book.genre)
-        br
-        label(for="isbn") ISBN:
-        input(type="text" id="isbn" name="isbn" value=product.Book.isbn)
+    //- Edit form card
+    .card
+      h2 Editing: #{product.name}
+        span(class=`badge badge-${product.type}` style="margin-left: 12px;")= product.type
 
-      br
-      button(type="submit") Save Changes
+      form(action=`/edit/${product.id}?_method=PUT` method="post")
 
-    a(href="/") Cancel
+        //- Core product fields
+        .form-grid
+          .form-group
+            label(for="name") Name
+            input(type="text" id="name" name="name" value=product.name required)
+          .form-group
+            label(for="price") Price (£)
+            input(type="number" id="price" name="price" step="0.01" value=product.price required)
+          .form-group
+            label(for="quantity") Quantity
+            input(type="number" id="quantity" name="quantity" value=product.quantity required)
+
+        hr.divider
+
+        //- Conditional fields based on product type
+        if product.type === 'clothing' && product.Clothing
+          .form-grid
+            .form-group
+              label(for="size") Size
+              input(type="text" id="size" name="size" value=product.Clothing.size)
+            .form-group
+              label(for="material") Material
+              input(type="text" id="material" name="material" value=product.Clothing.material)
+
+        else if product.type === 'electronic' && product.Electronic
+          .form-grid
+            .form-group
+              label(for="brand") Brand
+              input(type="text" id="brand" name="brand" value=product.Electronic.brand)
+            .form-group
+              label(for="warranty") Warranty
+              input(type="text" id="warranty" name="warranty" value=product.Electronic.warranty)
+
+        else if product.type === 'book' && product.Book
+          .form-grid
+            .form-group
+              label(for="author") Author
+              input(type="text" id="author" name="author" value=product.Book.author)
+            .form-group
+              label(for="genre") Genre
+              input(type="text" id="genre" name="genre" value=product.Book.genre)
+            .form-group
+              label(for="isbn") ISBN
+              input(type="text" id="isbn" name="isbn" value=product.Book.isbn)
+
+        hr.divider
+        .action-group
+          button(type="submit") Save Changes
+          a.btn.btn-secondary(href="/") Cancel

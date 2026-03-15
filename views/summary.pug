@@ -3,22 +3,63 @@ html
     title Stock Summary
     link(rel='stylesheet', href='/styles.css')
   body
-    h1 Stock Summary
 
-    h2 Overview
-    p Total Products: #{totalProducts}
-    p Total Stock Units: #{totalStock}
-    p Total Stock Value: £#{totalValue}
+    //- Navigation bar
+    nav.navbar
+      h1 Stock Summary
+      a(href="/") Back to Inventory
 
-    h2 Products by Category
-    p Clothing: #{byCategory.clothing}
-    p Electronics: #{byCategory.electronic}
-    p Books: #{byCategory.book}
+    //- Overview stats grid
+    .stats-grid
+      .stat-card
+        .stat-value= totalProducts
+        .stat-label Total Products
+      .stat-card
+        .stat-value= totalStock
+        .stat-label Total Stock Units
+      .stat-card
+        .stat-value £#{totalValue}
+        .stat-label Total Stock Value
+      .stat-card
+        .stat-value= byCategory.clothing
+        .stat-label Clothing Items
+      .stat-card
+        .stat-value= byCategory.electronic
+        .stat-label Electronics
+      .stat-card
+        .stat-value= byCategory.book
+        .stat-label Books
 
-    h2 Low Stock Alert (under 30 units)
-    if lowStock.length === 0
-      p All products are sufficiently stocked.
-    else
+    //- Low stock alerts
+    .card
+      h2 Low Stock Alert (under 30 units)
+      if lowStock.length === 0
+        .alert.alert-success
+          p All products are sufficiently stocked.
+      else
+        .alert.alert-warning
+          p #{lowStock.length} product(s) are running low on stock.
+        table
+          thead
+            tr
+              th ID
+              th Name
+              th Price
+              th Quantity
+              th Type
+          tbody
+            each product in lowStock
+              tr
+                td= product.id
+                td= product.name
+                td £#{product.price}
+                td.low-stock= product.quantity
+                td
+                  span(class=`badge badge-${product.type}`)= product.type
+
+    //- Full stock list
+    .card
+      h2 Full Stock List
       table
         thead
           tr
@@ -27,33 +68,14 @@ html
             th Price
             th Quantity
             th Type
+            th Stock Value
         tbody
-          each product in lowStock
+          each product in products
             tr
               td= product.id
               td= product.name
-              td= product.price
-              td= product.quantity
-              td= product.type
-
-    h2 Full Stock List
-    table
-      thead
-        tr
-          th ID
-          th Name
-          th Price
-          th Quantity
-          th Type
-          th Stock Value
-      tbody
-        each product in products
-          tr
-            td= product.id
-            td= product.name
-            td= product.price
-            td= product.quantity
-            td= product.type
-            td= '£' + (product.price * product.quantity).toFixed(2)
-
-    a(href="/") Back to Inventory
+              td £#{product.price}
+              td(class=product.quantity < 30 ? 'low-stock' : '')= product.quantity
+              td
+                span(class=`badge badge-${product.type}`)= product.type
+              td= '£' + (product.price * product.quantity).toFixed(2)

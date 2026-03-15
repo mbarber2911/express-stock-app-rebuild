@@ -3,42 +3,86 @@ html
     title Product Details
     link(rel='stylesheet', href='/styles.css')
   body
-    h1 Product Details
 
-    //- Display product information
-    p ID: #{product.id}
-    p Name: #{product.name}
-    p Price: #{product.price} GBP
-    p Quantity: #{product.quantity}
-    p Type: #{product.type}
+    //- Navigation bar
+    nav.navbar
+      h1 Product Details
+      a(href="/") Back to Inventory
 
-    //- Display additional details based on product type
-    if product.type === 'clothing' && product.Clothing
-      p Size: #{product.Clothing.size}
-      p Material: #{product.Clothing.material}
-    else if product.type === 'electronic' && product.Electronic
-      p Brand: #{product.Electronic.brand}
-      p Warranty: #{product.Electronic.warranty}
-    else if product.type === 'book' && product.Book
-      p Author: #{product.Book.author}
-      p Genre: #{product.Book.genre}
-      p ISBN: #{product.Book.isbn}
+    //- Product information card
+    .card
+      h2 #{product.name}
+      .form-grid
+        div
+          label Product ID
+          p= product.id
+        div
+          label Type
+          p
+            span(class=`badge badge-${product.type}`)= product.type
+        div
+          label Price
+          p £#{product.price}
+        div
+          label Quantity
+          p(class=product.quantity < 30 ? 'low-stock' : '')= product.quantity
 
-    //- Currency conversion form
-    h2 Currency Conversion
-    form(action=`/details/${product.id}/convert` method="get")
-      label(for="currency") Convert to:
-      select(id="currency" name="currency")
-        option(value="USD" selected=targetCurrency === 'USD') USD - US Dollar
-        option(value="EUR" selected=targetCurrency === 'EUR') EUR - Euro
-        option(value="JPY" selected=targetCurrency === 'JPY') JPY - Japanese Yen
-        option(value="CAD" selected=targetCurrency === 'CAD') CAD - Canadian Dollar
-        option(value="AUD" selected=targetCurrency === 'AUD') AUD - Australian Dollar
-        option(value="GBP" selected=targetCurrency === 'GBP') GBP - British Pound
-      button(type="submit") Convert
+      //- Additional fields based on product type
+      hr.divider
 
-    if convertedPrice
-      p Converted Price: #{convertedPrice} #{targetCurrency}
+      if product.type === 'clothing' && product.Clothing
+        .form-grid
+          div
+            label Size
+            p= product.Clothing.size
+          div
+            label Material
+            p= product.Clothing.material
 
-    //- Link back to the inventory list
-    a(href="/") Back to Inventory
+      else if product.type === 'electronic' && product.Electronic
+        .form-grid
+          div
+            label Brand
+            p= product.Electronic.brand
+          div
+            label Warranty
+            p= product.Electronic.warranty
+
+      else if product.type === 'book' && product.Book
+        .form-grid
+          div
+            label Author
+            p= product.Book.author
+          div
+            label Genre
+            p= product.Book.genre
+          div
+            label ISBN
+            p= product.Book.isbn
+
+    //- Currency conversion card
+    .card
+      h2 Currency Conversion
+      form(action=`/details/${product.id}/convert` method="get")
+        .form-grid
+          .form-group
+            label(for="currency") Convert to
+            select(id="currency" name="currency")
+              option(value="USD" selected=targetCurrency === 'USD') USD - US Dollar
+              option(value="EUR" selected=targetCurrency === 'EUR') EUR - Euro
+              option(value="JPY" selected=targetCurrency === 'JPY') JPY - Japanese Yen
+              option(value="CAD" selected=targetCurrency === 'CAD') CAD - Canadian Dollar
+              option(value="AUD" selected=targetCurrency === 'AUD') AUD - Australian Dollar
+              option(value="GBP" selected=targetCurrency === 'GBP') GBP - British Pound
+        hr.divider
+        button(type="submit") Convert
+
+      if convertedPrice
+        .alert.alert-success
+          p Converted Price: #{convertedPrice} #{targetCurrency}
+
+    //- Action buttons
+    .card
+      .action-group
+        a.btn.btn-secondary(href=`/edit/${product.id}`) Edit Product
+        a.btn.btn-secondary(href="/") Back to Inventory

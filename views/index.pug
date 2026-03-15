@@ -1,98 +1,128 @@
 html
-    head    
-        title Stock Control System
-        link(rel='stylesheet' href='/styles.css')
-    body
-        h1 Stock Inventory
-        a(href="/summary") View Stock Summary
+  head
+    title Stock Control System
+    link(rel='stylesheet' href='/styles.css')
+  body
 
-    //- Search form
-    form(action="/search" method="get")
-      input(type="text" name="query" placeholder="Search products" value=searchQuery)
-      button(type="submit") Search
+    //- Navigation bar
+    nav.navbar
+      h1 Stock Inventory
+      a(href="/summary") View Stock Summary
 
-    //- Sort options
-    form(action="/sort" method="get")
-      select(name="sortBy" onchange="this.form.submit()")
-        option(value="name" selected=sortBy === 'name') Sort by Name
-        option(value="price" selected=sortBy === 'price') Sort by Price
-        option(value="quantity" selected=sortBy === 'quantity') Sort by Quantity
-      select(name="order" onchange="this.form.submit()")
-        option(value="ASC" selected=order === 'ASC') Ascending
-        option(value="DESC" selected=order === 'DESC') Descending
+    //- Search and sort controls
+    .card
+      h2 Search & Sort
+      .form-grid
+        form(action="/search" method="get")
+          .form-group
+            label(for="query") Search
+            input(type="text" id="query" name="query" placeholder="Search products..." value=searchQuery)
+          button(type="submit") Search
+
+        form(action="/sort" method="get")
+          .form-group
+            label Sort By
+            select(name="sortBy" onchange="this.form.submit()")
+              option(value="name" selected=sortBy === 'name') Name
+              option(value="price" selected=sortBy === 'price') Price
+              option(value="quantity" selected=sortBy === 'quantity') Quantity
+          .form-group
+            label Order
+            select(name="order" onchange="this.form.submit()")
+              option(value="ASC" selected=order === 'ASC') Ascending
+              option(value="DESC" selected=order === 'DESC') Descending
 
     //- Add new product form
-    form(action="/create" method="post")
-      label(for="id") ID:
-      input(type="text" id="id" name="id" required)
-      br
-      label(for="name") Name:
-      input(type="text" id="name" name="name" required)
-      br
-      label(for="price") Price:
-      input(type="number" id="price" name="price" step="0.01" required)
-      br
-      label(for="quantity") Quantity:
-      input(type="number" id="quantity" name="quantity" required)
-      br
-      label(for="type") Type:
-      select(id="type" name="type" required)
-        option(value="") Select a type
-        option(value="clothing") Clothing
-        option(value="electronic") Electronic
-        option(value="book") Book
-      br
-      //- Conditional fields for clothing, electronics and books
-      div(id="clothingFields" style="display: none;")
-        label(for="size") Size:
-        input(type="text" id="size" name="size")
-        br
-        label(for="material") Material:
-        input(type="text" id="material" name="material")
-      div(id="electronicFields" style="display: none;")
-        label(for="brand") Brand:
-        input(type="text" id="brand" name="brand")
-        br
-        label(for="warranty") Warranty:
-        input(type="text" id="warranty" name="warranty")
-      div(id="bookFields" style="display: none;")
-        label(for="author") Author:
-        input(type="text" id="author" name="author")
-        br
-        label(for="genre") Genre:
-        input(type="text" id="genre" name="genre")
-        br
-        label(for="isbn") ISBN:
-        input(type="text" id="isbn" name="isbn")
-      br
+    .card
+      h2 Add New Product
+      form(action="/create" method="post")
+        .form-grid
+          .form-group
+            label(for="id") Product ID
+            input(type="text" id="id" name="id" required)
+          .form-group
+            label(for="name") Name
+            input(type="text" id="name" name="name" required)
+          .form-group
+            label(for="price") Price (£)
+            input(type="number" id="price" name="price" step="0.01" required)
+          .form-group
+            label(for="quantity") Quantity
+            input(type="number" id="quantity" name="quantity" required)
+          .form-group
+            label(for="type") Type
+            select(id="type" name="type" required)
+              option(value="") Select a type
+              option(value="clothing") Clothing
+              option(value="electronic") Electronic
+              option(value="book") Book
 
-      button(type="submit") Add Product
+        //- Conditional fields for clothing
+        div(id="clothingFields" style="display: none;")
+          hr.divider
+          .form-grid
+            .form-group
+              label(for="size") Size
+              input(type="text" id="size" name="size")
+            .form-group
+              label(for="material") Material
+              input(type="text" id="material" name="material")
 
-    //- Display products
-    table
-      thead
-        tr
-          th ID
-          th Name
-          th Price
-          th Quantity
-          th Type
-          th Actions
-      tbody
-        each product in products
+        //- Conditional fields for electronics
+        div(id="electronicFields" style="display: none;")
+          hr.divider
+          .form-grid
+            .form-group
+              label(for="brand") Brand
+              input(type="text" id="brand" name="brand")
+            .form-group
+              label(for="warranty") Warranty
+              input(type="text" id="warranty" name="warranty")
+
+        //- Conditional fields for books
+        div(id="bookFields" style="display: none;")
+          hr.divider
+          .form-grid
+            .form-group
+              label(for="author") Author
+              input(type="text" id="author" name="author")
+            .form-group
+              label(for="genre") Genre
+              input(type="text" id="genre" name="genre")
+            .form-group
+              label(for="isbn") ISBN
+              input(type="text" id="isbn" name="isbn")
+
+        hr.divider
+        button(type="submit") Add Product
+
+    //- Product table
+    .card
+      h2 Product Inventory
+      table
+        thead
           tr
-            td= product.id
-            td= product.name
-            td= product.price
-            td= product.quantity
-            td= product.type 
-            td
-              a(href=`/details/${product.id}`) View Details
-              | &nbsp;
-              a(href=`/edit/${product.id}`) Edit
-              | &nbsp;
-              form(action=`/delete/${product.id}?_method=DELETE` method="post" style="display:inline;")
-                button(type="submit") Delete
+            th ID
+            th Name
+            th Price
+            th Quantity
+            th Type
+            th Actions
+        tbody
+          each product in products
+            tr
+              td= product.id
+              td= product.name
+              td £#{product.price}
+              td(class=product.quantity < 30 ? 'low-stock' : '')= product.quantity
+              td
+                span(class=`badge badge-${product.type}`)= product.type
+              td
+                .action-group
+                  a.btn.btn-secondary(href=`/details/${product.id}`) Details
+                  a.btn.btn-secondary(href=`/edit/${product.id}`) Edit
+                  form(action=`/delete/${product.id}?_method=DELETE` method="post")
+                    button.btn-danger(type="submit") Delete
 
     //- JavaScript for conditional fields
     script.
@@ -102,26 +132,24 @@ html
       const bookFields = document.getElementById('bookFields');
 
       function updateFields() {
-          if (typeSelect.value === 'clothing') {
-              clothingFields.style.display = 'block';
-              electronicFields.style.display = 'none';
-              bookFields.style.display = 'none';
-          } else if (typeSelect.value === 'electronic') {
-              clothingFields.style.display = 'none';
-              electronicFields.style.display = 'block';
-              bookFields.style.display = 'none';
-          } else if (typeSelect.value === 'book') {
-              clothingFields.style.display = 'none';
-              electronicFields.style.display = 'none';
-              bookFields.style.display = 'block';
-          } else {
-              clothingFields.style.display = 'none';
-              electronicFields.style.display = 'none';
-              bookFields.style.display = 'none';
-          }
+        if (typeSelect.value === 'clothing') {
+          clothingFields.style.display = 'block';
+          electronicFields.style.display = 'none';
+          bookFields.style.display = 'none';
+        } else if (typeSelect.value === 'electronic') {
+          clothingFields.style.display = 'none';
+          electronicFields.style.display = 'block';
+          bookFields.style.display = 'none';
+        } else if (typeSelect.value === 'book') {
+          clothingFields.style.display = 'none';
+          electronicFields.style.display = 'none';
+          bookFields.style.display = 'block';
+        } else {
+          clothingFields.style.display = 'none';
+          electronicFields.style.display = 'none';
+          bookFields.style.display = 'none';
+        }
       }
 
       typeSelect.addEventListener('change', updateFields);
-      
-      // Initialize fields on page load
       updateFields();
